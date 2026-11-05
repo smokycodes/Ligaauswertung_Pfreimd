@@ -284,14 +284,14 @@ footer{padding:4px 12px 24px;text-align:center}
 'use strict';
 const $ = s => document.querySelector(s);
 const h = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const CFG = {"ns": "pfreimd_", "db": "bogenliga_pfreimd", "club": "Pfreimd", "liga": "Bezirksliga"};
+const CFG = {"ns": "pfreimd_", "db": "bogenliga_pfreimd", "club": "Pfreimd", "liga": "Bezirksliga", "datei": "daten_pfreimd.enc.json"};
 const LS = { get(k) { try { return localStorage.getItem(CFG.ns + k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(CFG.ns + k, v); } catch (e) {} }, del(k) { try { localStorage.removeItem(CFG.ns + k); } catch (e) {} } };
 const n = (v, d) => (v == null || (typeof v === 'number' && isNaN(v)) ? '–' : Number(v).toFixed(d == null ? 0 : d).replace('.', ','));
 let DATA = null, RES = null;
 
 /* ---------- Anmeldung ---------- */
 async function load(pw) {
-  const r = await fetch('daten.enc.json?' + Date.now(), { cache: 'no-store' });
+  const r = await fetch(CFG.datei + '?' + Date.now(), { cache: 'no-store' });
   if (!r.ok) throw new Error(r.status === 404 ? 'Es sind noch keine Daten veröffentlicht.' : 'Die Daten konnten nicht geladen werden (HTTP ' + r.status + ').');
   DATA = await Pub.decrypt(await r.json(), pw);
 }

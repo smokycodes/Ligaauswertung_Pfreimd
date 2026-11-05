@@ -145,7 +145,7 @@ details summary{padding:2px 0}
     <input type="password" id="pubpw" autocomplete="new-password">
     <label style="display:block;margin:8px 0;font-size:14px"><input type="checkbox" id="pubRemember"> Passwort auf diesem Handy merken</label>
     <button class="b" id="btnPublish">Datei für Kollegen erzeugen</button>
-    <div class="klein" style="margin-top:6px">Die Datei <b>daten.enc.json</b> ist verschlüsselt. Lade sie in GitHub hoch: Repository öffnen → Add file → Upload files → Datei wählen → Commit changes. Eine vorhandene Datei gleichen Namens wird ersetzt.</div>
+    <div class="klein" style="margin-top:6px">Die Datei <b id="dateiName">daten.enc.json</b> ist verschlüsselt. Lade sie in GitHub hoch: Repository öffnen → Add file → Upload files → Datei wählen → Commit changes. Eine vorhandene Datei gleichen Namens wird ersetzt.</div>
     <div class="klein" style="margin-top:10px">Link für die Kollegen:</div>
     <input type="text" id="viewerUrl" readonly>
     <button class="b sek" id="btnCopyUrl" style="margin-top:6px">Link kopieren</button>
@@ -546,7 +546,7 @@ details summary{padding:2px 0}
 </script>
 <script>
 'use strict';
-const CFG = {"ns": "pfreimd_", "db": "bogenliga_pfreimd", "club": "Pfreimd", "liga": "Bezirksliga"};
+const CFG = {"ns": "pfreimd_", "db": "bogenliga_pfreimd", "club": "Pfreimd", "liga": "Bezirksliga", "datei": "daten_pfreimd.enc.json"};
 const $ = s => document.querySelector(s);
 const h = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const LS = {
@@ -583,7 +583,7 @@ const dbClear = () => tx('readwrite', s => s.clear());
 function loadSettings() {
   $('#apiKey').value = LS.get('apiKey', '');
   $('#model').value = LS.get('model', 'claude-sonnet-5-5');
-  document.title = CFG.liga + ' Erfassung'; $('#appTitel').textContent = CFG.liga + ' · Erfassung';
+  $('#dateiName').textContent = CFG.datei; document.title = CFG.liga + ' Erfassung'; $('#appTitel').textContent = CFG.liga + ' · Erfassung';
   $('#club').value = LS.get('club', CFG.club);
   $('#saison').value = LS.get('saison', '2025/2026');
   $('#autoBackup').checked = LS.get('autoBackup', '1') === '1';
@@ -882,7 +882,7 @@ $('#btnPublish').onclick = async () => {
   try {
     const data = { v: 1, saison: LS.get('saison', '2025/2026'), verein: club(), erzeugt: new Date().toISOString(), schuetzen: ok, matches: recs.map(Pub.compact) };
     const file = await Pub.encrypt(data, pw);
-    download('daten.enc.json', JSON.stringify(file), 'application/json');
+    download(CFG.datei, JSON.stringify(file), 'application/json');
     toast(`Datei mit ${recs.length} Matches erzeugt – jetzt in GitHub hochladen`);
   } catch (e) { alert('Erzeugen fehlgeschlagen: ' + e.message); }
 };
